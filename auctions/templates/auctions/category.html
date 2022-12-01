@@ -1,0 +1,37 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+    {% if list_cat %}
+    <h2>{{list_cat}} Type Pokemons</h2>
+    
+        <div class="row mx-3">
+            {% for entry in lists %}
+                <div class="card mx-3" style="width: 18rem;">
+                    <a href="{% url 'item' id=entry.id %}"><img src="{{entry.imageUrl}}" class="card-img-top" alt="{{entry.title}}"></a>
+                    <div class="card-body">
+                        <h5 class="card-title"><a href="{% url 'item' id=entry.id %}">{{entry.title}}</a></h5>    
+                        <p class="card-text">{{entry.description}}</p>
+                    </div>
+                </div> 
+            {% endfor %}
+        </div>
+    {% else %}
+    <h2>Categories</h2>
+    <a href="{% url 'new_cat' pk='cat' %}"><h6>Create New Category</h6></a>
+        <form action="POST">
+            {% csrf_token %}
+            <div class="row mx-3">
+                {% for cats in category %}
+                    <div class="card mx-3" style="width: 18rem;">
+                        <a href="{% url 'view_cat' pk=cats %}"><img src="{{cats.imgUrl}}" class="card-img-top" alt="{{cats.category_name}}"></a>
+                        <div class="card-body">
+                            <h5 class="card-title"><a href="{% url 'view_cat' pk=cats %}">{{cats}} Type</a></h5>    
+                        </div>
+                    </div> 
+                {% endfor %}
+            </div>
+        </form>
+    {% endif %}
+        
+    
+{% endblock %}

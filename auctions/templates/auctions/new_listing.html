@@ -1,0 +1,38 @@
+{% extends 'auctions/layout.html' %}
+    {% block body %}
+        <style>
+            #inside {
+                margin-top: 30px;
+                margin-left: 30px;
+                margin-right: 70vh;
+            }
+        </style>
+
+        <h2>Create New Listing</h2>
+        <form action="{% url 'new_listing' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group" id="inside">
+                <label for="category">Choose a category:</label>
+                <select name="category" id="category">
+                    {% for cat in categories %}
+                        <option value="{{ cat }}">{{ cat }}</option>
+                    {% endfor %} 
+                </select>
+                
+                <a href="{% url 'new_cat' pk='list' %}"><h6>Create New Category</h6></a>
+            </div>
+            <div class="form-group" id="inside">
+                <input type="text" class="form-control" name="title"  placeholder="Enter Title">
+            </div>
+            <div class="form-group" id="inside">
+                <textarea rows="6" type="text" class="form-control" name="des" id="des" placeholder="Enter Description"></textarea>
+            </div>
+            <div class="form-group" id="inside">
+                <input type="text" class="form-control" name="price"  placeholder="Enter Price">
+            </div>
+            <div class="form-group" id="inside">
+                <input type="text" class="form-control" name="image"  placeholder="Enter Image Url">
+            </div>
+            <button id="inside" type="submit" class="btn btn-success">Save</button>
+        </form>
+{% endblock %}

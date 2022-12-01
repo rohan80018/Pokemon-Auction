@@ -1,0 +1,98 @@
+{% extends 'auctions/layout.html' %}
+
+{% block body %}
+    {% if pokemon.is_active == False  %}
+        <div class="alert- alert-success" role="alert">
+            <h4>Congratulations, User: <strong>{{bid_user}}</strong> won the auction </h4>
+        </div>
+    {%endif%}
+    <h1>{{pokemon.title}}</h1>
+    
+    
+    <div class="row mx-3">
+        <img src="{{pokemon.imageUrl}}"  alt="{{pokemon.title}}">
+        <div style=" margin-top: 20vh; width: 100vh;"class="container-md">
+            <h3>{{pokemon.description}}</h3></div>
+    </div>
+  
+    <br>
+    {% load humanize %}
+    <div class="container-xxl">
+        <h3>Type: <a href="{% url 'view_cat' pk=pokemon.category %}">{{pokemon.category}}</a></h3>
+        <h3>Listed Price: {{pokemon.price }} $</h3>
+        {% if bid == 0%}
+            <h3>Higgest Bid: No Bid </h3>
+        {%else %}
+            <h3>Higgest Bid: {{bid}} $</h3>
+        {%endif%}
+        {% if user.is_authenticated %}
+            {% if request.user != pokemon.owner and pokemon.is_active  %}
+                <form action="{% url 'addBid' id=pokemon.id %}" method="POST">
+                    {% csrf_token %}
+                    <input type="number" name="bid" placeholder="Add Bid" min="{{mini}}">
+                    <button type="submit" class="btn btn-warning">Add</button>
+                </form>
+            {%endif%}
+            {% if request.user != pokemon.owner %}
+                {% if in_watchlist %}
+                    <form action="{%url 'remove_watchlist' id=pokemon.id %}" method="POST">
+                        {%csrf_token %}
+                        <button type="submit" class="btn btn-danger">Remove From Watchlist</button>
+                    </form>
+                {%else%}
+                <form action="{% url 'add_watchlist' id=pokemon.id %}" method="POST">
+                    {%csrf_token %}
+                    <button type="submit" class="btn btn-success">Add To Watchlist</button>
+                </form>
+                {%endif%}
+            {%endif%}
+        {% endif %}
+    </div>
+    <br>
+    <div>
+        <h5>Details</h5>
+        <ul>
+            <li>Listed By: {{pokemon.owner}}</li>
+            {% if request.user == pokemon.owner %}
+                {% if pokemon.is_active and bid != 0%}
+                    <form action="{% url 'close' id=pokemon.id%}" method="POST">
+                    {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Close Bid</button>
+                    </form>
+                    
+                {%endif%}
+            {%elif pokemon.is_active %}
+                <li>Active: Yes</li>
+            {%else%}
+                <li>Active: No</li>
+            {%endif%}
+        </ul>   
+    </div>
+    <div>
+        <h5>Comments</h5>
+        <div>
+            <form action="{% url 'userComment' id=pokemon.id %}" method="POST">
+                {% csrf_token %}
+                {% if user.is_authenticated %}
+                    <input type="text" name="comment" placeholder="Add Comment">
+                    <button type="submit" class="btn btn-warning">Add</button>
+                {%endif%}
+            </form>   
+        </div>
+        <br>
+        <div>
+            <ul class="list-group">
+                {% for message in comments %}
+                    <li class="list-group-item">
+                        <h6>{{message.message}}</h6>
+                        
+                        Posted by <strong>{{message.author}}</strong>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+        
+    
+{% endblock %}
